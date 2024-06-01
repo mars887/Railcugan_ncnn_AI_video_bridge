@@ -21,7 +21,7 @@ fun main(_args: Array<String>) {
 
     if (args.contains("-help")) {
         val lang = if (args.contains("ru")) "ru" else "en"
-        ParamDescriptions.paramDescriptions.forEach { t, map ->
+        ParamDescriptions.paramDescriptions.forEach { (t, map) ->
             println("[ $t ]")
             println("- Description: ${map[lang]}")
             println("- Aliases: " + (ParamList.paramsList.find { it.realKey == t }?.keys?.joinToString(separator = ", ") ?: ""))
