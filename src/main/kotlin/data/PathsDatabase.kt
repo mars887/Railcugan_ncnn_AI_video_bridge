@@ -7,6 +7,7 @@ import param.Params
 import param.getFrom
 import java.awt.FileDialog
 import java.awt.Frame
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -40,21 +41,24 @@ class PathsDatabase(val app: App) {
 
 
     private fun getOutputForExe(path: Path): String {
-        if (!path.exists()) return ""
-        ProcessBuilder(path.toString())
-            .directory(path.parent.toFile())
-            .start().run {
-                val errors = errorReader()
-                    .lines()
-                    .toList()
-                    .joinToString(separator = "\n")
-                val inputs = inputReader()
-                    .lines()
-                    .toList()
-                    .joinToString(separator = "\n")
-                val out = errors + "\n" + inputs
-                return out
-            }
+        try {
+            ProcessBuilder(path.toAbsolutePath().toString())
+                .start().run {
+                    val errors = errorReader()
+                        .lines()
+                        .toList()
+                        .joinToString(separator = "\n")
+                    val inputs = inputReader()
+                        .lines()
+                        .toList()
+                        .joinToString(separator = "\n")
+                    val out = errors + "\n" + inputs
+                    return out
+                }
+        } catch (e: IOException) {
+            return ""
+        }
+
     }
 
     private fun requirerealcuganPath(): String {
@@ -74,6 +78,7 @@ class PathsDatabase(val app: App) {
     private fun openFileChooser(windowName: String): String {
         val dialog = FileDialog(null as Frame?, windowName, FileDialog.LOAD)
         dialog.isVisible = true
+        dialog.requestFocusInWindow()
         dialog.setFilenameFilter { _, name ->
             return@setFilenameFilter name.endsWith(".exe")
         }
@@ -99,7 +104,7 @@ class PathsDatabase(val app: App) {
                 Files.isDirectory(path) && Files.isWritable(path)
             }
         } ?: exePath
-        tempFilesPath += if(tempFilesPath!!.endsWith("\\")) "temp\\" else "\\temp\\"
+        tempFilesPath += if (tempFilesPath!!.endsWith("\\")) "temp\\" else "\\temp\\"
         inputPath = ParamKeys.inputPath.getFrom(app.params)
         outputPath = ParamKeys.outputPath.getFrom(app.params)
         return inited
@@ -229,7 +234,7 @@ class PathsDatabase(val app: App) {
             convertOutputDirectoryToFile()
             path = Paths.get(outputPath!!)
         }
-        if(path.extension.isBlank()) {
+        if (path.extension.isBlank()) {
             outputPath = outputPath + "." + Paths.get(inputPath!!).extension
             path = Paths.get(outputPath!!)
         }
@@ -239,16 +244,21 @@ class PathsDatabase(val app: App) {
         }
 
         if (path.exists())
-            return ((ParamKeys.autoReplaceOutput.getFrom(params)?: "false") == "true")
+            return ((ParamKeys.autoReplaceOutput.getFrom(params) ?: "false") == "true")
                     || app.resolveOutputPathExists(path)
         return true
     }
 
-    fun readOutputFilePath(trys: Int = 3,params: Params): Boolean {
+    fun readOutputFilePath(trys: Int = 3, params: Params): Boolean {
         repeat(trys) {
             val dialog = FileDialog(null as Frame?, "choose output file or directory", FileDialog.SAVE)
             dialog.isVisible = true
-            outputPath = dialog.directory + dialog.file
+            outputPath = (dialog.directory?: "") + (dialog.file?: "")
+            if (outputPath.isNullOrBlank()) {
+                val inp = Paths.get(inputPath!!)
+                outputPath = (inp.parent.toString() + "\\" + inp.fileName.toString()
+                    .dropLast(inp.fileName.extension.length + 1)) + "_scaled." + inp.extension
+            }
             if (checkOutputFile(params)) return true
         }
         return false
@@ -262,7 +272,7 @@ class PathsDatabase(val app: App) {
     }
 
     companion object {
-        const val DEFAULT_JSON_FILE_NAME = "properties.json"
+        const val DEFAULT_JSON_FILE_NAME = "RCAIVBProperties.json"
         const val AVAILABLE_INPUT_FORMATS = "mp4 mov jpg png jpeg"
     }
 }

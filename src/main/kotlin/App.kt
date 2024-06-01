@@ -50,12 +50,12 @@ class App(internal val params: Params, val reader: BufferedReader) {
         if(ParamList.ParamKeys.printFullParams.getFrom(params) == "true") {
             println(" -- Params -- ")
             params.forEachParam { paramKeys, s ->
-                println("  [" + "$paramKeys".toGreen() + "] = $s")
+                println("  [ $paramKeys ] = $s")
             }
             println(" ------------ ")
         }
 
-        println("starting".toGreen())
+        println("STARTING")
 
         val process = ProcessRouter.route(pathsDatabase)
 
@@ -79,7 +79,7 @@ class App(internal val params: Params, val reader: BufferedReader) {
         }
         println("Clearing temp files...")
         Paths.get(pathsDatabase.tempFilesPath!!).treeRemove()
-        println("finished".toGreen())
+        println("FINISHED")
         exitProcess(0)
     }
 
@@ -110,7 +110,6 @@ private fun Path.treeRemove() {
         }
         Files.delete(this)
     } else {
-        println("deleting $this")
         Files.delete(this)
     }
 }
