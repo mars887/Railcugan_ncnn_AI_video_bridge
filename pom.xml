@@ -6,7 +6,7 @@
 
     <artifactId>railcugan_ncnn_video_bridge</artifactId>
     <groupId>daxo</groupId>
-    <version>alpha-0.1</version>
+    <version>alpha-0.2.3</version>
     <packaging>jar</packaging>
 
     <name>RealcuganVideoBridge</name>
@@ -31,7 +31,7 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>1.9.22</version>
+                <version>2.0.0</version>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -71,19 +71,20 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit5</artifactId>
-            <version>1.9.22</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>1.9.22</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>DaxoLib</groupId>
+            <artifactId>ImageEngineCore</artifactId>
+            <version>1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ImageEngineCore.jar</systemPath>
         </dependency>
     </dependencies>
 

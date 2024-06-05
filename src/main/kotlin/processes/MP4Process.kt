@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import param.ParamList
@@ -88,35 +87,29 @@ class MP4Process(private val paths: PathsDatabase) : DefaultProcess() {
             realcuganHelper.add(it.second) { image ->
                 synchronized(upscaledImages) {
                     app.detailLog.sent("frame - ${it.first} upscaled")
+                    app.infoLog.sent("realcugan queue - ${realcuganHelper.isBusy()}")
                     upscaledImages.add(Pair(it.first, it.second))
                 }
             }
         }.launchIn(scope)
 
         try {
-            app.infoLog.sent("waiting frame splitter end")
+            app.detailLog.sent("waiting frame splitter end")
             while (!frameSplitterEnded) Thread.sleep(100)
-            app.infoLog.sent("waiting image processor end")
+            app.detailLog.sent("waiting image processor end")
             imgToDataProcessor.join(1000)
-            app.infoLog.sent("waiting realcugan helper end")
+            app.detailLog.sent("waiting realcugan helper end")
             do {
                 val busyState = realcuganHelper.isBusy()
-                println("realcugan queue - $busyState")
                 Thread.sleep(200)
             } while (busyState != -1)
 
             realcuganHelper.destroy()
-            app.infoLog.sent("waiting video concat end")
+            app.detailLog.sent("waiting video concat end")
             ConcatFramesToVideo.concat(upscaledImages, paths, params)
         } catch (e: Exception) {
             e.printStackTrace()
             println(e.message)
-        }
-    }
-
-    private fun MutableSharedFlow<String>.print(text: String) {
-        runBlocking {
-            this@print.emit("MP4Log -> $text")
         }
     }
 }

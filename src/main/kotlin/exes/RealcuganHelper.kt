@@ -3,21 +3,13 @@ package exes
 import ImageData
 import app
 import data.PathsDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import param.ParamList
 import param.Params
 import param.getFrom
 import sent
 import java.nio.file.Paths
-import java.util.LinkedList
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.max
 import kotlin.math.min
 

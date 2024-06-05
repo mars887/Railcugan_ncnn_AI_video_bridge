@@ -22,7 +22,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.system.exitProcess
 
-class App(internal val params: Params, val reader: BufferedReader) {
+class App(internal val params: Params, private val reader: BufferedReader) {
 
     public val infoLog = Channel<String>(1024, BufferOverflow.DROP_OLDEST)
     public val detailLog = Channel<String>(1024, BufferOverflow.DROP_OLDEST)
