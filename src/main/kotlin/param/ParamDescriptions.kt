@@ -31,7 +31,7 @@ object ParamDescriptions {
                     "en" to "specifies the maximum number of simultaneously running realcugan.exe , multiplied by the number of active GPUs",
                     "ru" to "Указывает максимальное количество одновременно запущенных файлов realcugan.exe, умножается на количество активных GPU",
                     "values" to "range - 1 to infinity",
-                    "default" to 3
+                    "default" to 2
                 ),
         ParamList.ParamKeys.saveSettings to
                 hashMapOf(

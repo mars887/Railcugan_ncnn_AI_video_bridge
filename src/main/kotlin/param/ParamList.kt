@@ -25,7 +25,7 @@ object ParamList {
         Param(
             ParamKeys.realcuganThreads,
             arrayOf("realcuganThreads", "rt"),
-            3
+            2
         ),
         Param(
             ParamKeys.saveSettings,
