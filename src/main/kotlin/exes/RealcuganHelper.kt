@@ -49,8 +49,7 @@ class RealcuganHelper(private val paths: PathsDatabase, params: Params, private 
                 }
         this.gpus = gpus.toTypedArray()
 
-        executors = Array((ParamList.ParamKeys.realcuganThreads.getFrom(params) ?: "3").toInt() * max(gpus.size, 1))
-        {
+        executors = Array((ParamList.ParamKeys.realcuganThreads.getFrom(params) ?: "2").toInt() * max(gpus.size, 1)) {
             val gpu = if (gpus.size > 0) gpus[it % gpus.size] else -1
             getAndStartExecutorForGpu(gpu)
         }
@@ -69,9 +68,11 @@ class RealcuganHelper(private val paths: PathsDatabase, params: Params, private 
             paths.realcuganPath,
             "-i", "null",
             "-o", "null.png"
-        ).start().inputReader().lines().toList().map {
-            it.takeWhile { it != ' ' }.drop(1).toInt()
-        }.distinct()
+        ).start().errorReader().lines().toList()
+            .filter { it.startsWith("[") }
+            .map {
+                it.takeWhile { it != ' ' }.drop(1).toInt()
+            }.distinct()
     }
 
     fun add(source: ImageData, function: (String) -> Unit) {
